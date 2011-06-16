@@ -4,7 +4,7 @@ local job_time = os.time()
 local x, a, line
 local l = 0
 
-for s in assert(io.open(arg[1] or "E:/base_exp.txt")):lines() do
+for s in assert(io.open(arg[1] or "base_exp.txt")):lines() do
   l = l + 1
   local _, _, y, b = s:find "(%d+),(%d+)"
   assert(y and b)
