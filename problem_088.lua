@@ -102,6 +102,42 @@ local function get_divisors(number)
   return divisors
 end
 
+divisor_hash = {}
+
+local function get_divisors_2(number)
+  local divisors = divisor_hash[number]
+  if divisors then
+    return divisors
+  else
+    divisors = {}
+    divisor_hash[number] = divisors
+  end
+
+  local function add(t)
+    table.sort(t)
+    divisors[table.concat(t, "*")] = t
+  end
+  if prime_hash[number] then
+    add { number }
+  else
+    for i = 1, #primes do
+      local prime = primes[i]
+      if number % prime == 0 then
+        for _, v in pairs(get_divisors_2(number / prime)) do
+          add { prime, unpack(v) }
+          for j = 1, #v do
+            local t = { unpack(v) }
+            t[j] = t[j] * prime
+            add(t)
+          end
+        end
+        break
+      end
+    end
+  end
+  return divisors
+end
+
 --print(unpack(get_divisors(100)))
 
 num_max = 0
@@ -173,15 +209,15 @@ function get_all_divisors(number)
   return div_hash
 end
 
-for k in pairs(get_all_divisors(50)) do
-  print(k)
-end
-do return end
+--~ for k in pairs(get_divisors_2(NUM_MAX * 2)) do
+--~   print(k)
+--~ end
+--~ do return end
 
 --get_product_sum_number(10)
 count = 0
 for n = 4, NUM_MAX * 2 do
-  local divs = get_all_divisors(n)
+  local divs = get_divisors_2(n)
 --~   if #divs > num_max then
 --~     num_max = #divs
 --~     print(num_max, n, ":", unpack(divs))
