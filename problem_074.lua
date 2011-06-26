@@ -23,14 +23,23 @@ function link(number)
   end
 end
 
+lengthes = {}
+
 function get_length(number)
   local count = 0
   local done = {}
-  while not done[number] do
-    count = count + 1
-    done[number] = true
-    number = links[number]
+  local i = number
+  while not done[i] do
+    if lengthes[i] then
+      count = count + lengthes[i]
+      break
+    else
+      count = count + 1
+    end
+    done[i] = true
+    i = links[i]
   end
+  lengthes[number] = count
   return count
 end
 
