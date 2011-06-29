@@ -4,8 +4,6 @@ job_time = os.time()
 -- http://oeis.org/A015614
 -- a(n) = Sum( euler_phi(i), i=1..n) - 1
 
-D_MAX = 10^6
-
 -- The General formula for Euler's Totient Function is:
 -- euler_phi(m) = m * (1 - 1 / p1) * (1 - 1 / p2) * (1 - 1 / p3) * ( ... ) * (1 - 1 / pn)
 -- Where p1, p2, p3, . . . , pn are prime factors of m.
@@ -42,6 +40,7 @@ function euler_phi(number)
   return number - 1, true
 end
 
+D_MAX = 10^6
 count = 0
 for n = 2, D_MAX do
   count = count + euler_phi(n)
