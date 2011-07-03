@@ -10,14 +10,31 @@ function to_integer(number)
   return (string.gsub(tostring(number), "%.%d*", "", 1))
 end
 
--- get Pell's equation (x^2 - d * y^2 = 1) fundamental solution
+-- http://mathworld.wolfram.com/PellEquation.html
+--
+-- Pell equations of the form x^2 - D * y^2 = 1 can be solved by finding
+-- the continued fraction a = { a0, a1, ... } of sqrt(D).
+-- Amazingly, this turns out to always be possible as a result of the fact
+-- that the continued fraction of a quadratic surd ((P +- sqrt(D)) / Q) always
+-- becomes periodic at some term a[r+1], where a[r+1] == 2 * a0, i.e.,
+-- sqrt(D) = { a0; a1, ..., ar, 2 * a0 }
+--
+-- To compute the continued fraction convergents to sqrt(d), we'll use the
+-- usual recurrence relations:
+-- a[0] = math.floor(math.sqrt(D))                                        (1)
+-- p[0] = a[0]                                                            (2)
+-- p[1] = a[0] * a[1] + 1                                                 (3)
+-- p[n] = a[n] * p[n - 1] + p[n - 2]                                      (4)
+-- q[0] = 1                                                               (5)
+-- q[1] = a[1]                                                            (6)
+-- q[n] = a[n] * q[n - 1] + q[n - 2]                                      (7)
 function pell(d)
   local a0 = math.floor(math.sqrt(d))
   if a0 * a0 == d then
     return nil, "no solution, D is a perfect square"
   end
   local gp = { bc.number(0), bc.number(a0) }
-  local gq = { bc.number(1), bc.number(d - a0*a0) }
+  local gq = { bc.number(1), bc.number(d - a0 * a0) }
   local a = { bc.number(a0), bc.number(math.floor((a0 + a0) / (d - a0*a0))) }
   local p = { a[1], a[1] * a[2] + 1 }
   local q = { 1, a[2] }

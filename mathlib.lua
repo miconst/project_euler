@@ -124,3 +124,20 @@ end
 --~ for k, v in pairs(get_all_divisors(100)) do
 --~   print(table.concat(v, "*"))
 --~ end
+
+-- Greatest Common Divisor. Euclid's Algorithm.
+function gcd(a, b)
+  while true do
+    a, b = b, a % b
+    if b == 0 then
+      return a
+    elseif b == 1 then
+      return 1
+    end
+  end
+end
+
+--~ print "gcd test"
+--~ print(gcd(89, 17))
+--~ print(gcd(2047, 391), 2047 / gcd(2047, 391), 391 / gcd(2047, 391))
+--~ print(gcd(25, 5))
