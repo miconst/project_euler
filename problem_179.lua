@@ -22,22 +22,19 @@ end
 
 main_primes = get_main_primes(N_MAX - 1)
 
-function get_divisors(number)
-  local divisors = {}
+function get_primes(number)
+  local primes = {}
   while number > 1 do
-    local p = main_primes[ number ]
-    if not divisors[p] then
-      divisors[p] = 0
-    end
-    divisors[p] = divisors[p] + 1
+    local p = main_primes[number]
+    primes[p] = (primes[p] or 0) + 1
     number = number / p
   end
-  return divisors
+  return primes
 end
 
 function count_divisors(number)
   local c = 0
-  for k, v in pairs(get_divisors(number)) do
+  for k, v in pairs(get_primes(number)) do
     c = c * (v + 1) + v
   end
   return c
