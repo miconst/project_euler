@@ -19,7 +19,7 @@ for w = 2, 4 do
   end
 end
 
-print("problem #116", "ways that the black tiles in a row measuring fifty units in length can be replaced:", total_count, total_count == 20492570929)
+print("problem #116", "ways that the black tiles in a row can be replaced:", total_count, total_count == 20492570929)
 
 job_time = os.time() - job_time
 print(string.format("Job has taken %d min %d sec.", math.floor(job_time / 60), job_time % 60))
