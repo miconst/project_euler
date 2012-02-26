@@ -4,8 +4,16 @@ job_time = os.time()
 done = { [1] = { 0, "1" } }
 
 function get_number_of_multiplications(k)
-  local s = ""
-  local level_max = done[k - 1][1] + 2--math.floor(math.log(k) / math.log(2)) + 3
+  if k % 2 == 0 then
+    local level_max = done[k / 2][1] + 1
+    local path = done[k / 2][2] .. "->" .. tostring(k)
+    done[k] = { level_max, path }
+    return level_max, path
+  end
+
+  local level_max = done[k - 1][1] + 1
+  local path = done[k - 1][2] .. "->" .. tostring(k)
+
   ---print(level_max)
   local numbers = { [1] = 1 }
   local tested = {}
@@ -27,7 +35,7 @@ function get_number_of_multiplications(k)
           -- gotcha
           level_max = level
           table.insert(numbers, n)
-          s = table.concat(numbers, "->")
+          path = table.concat(numbers, "->")
           table.remove(numbers)
           return
         elseif level + 1 < level_max and n < k and n > numbers[#numbers] then
@@ -39,15 +47,15 @@ function get_number_of_multiplications(k)
     end
   end
   test(1)
-  done[k] = { level_max, s }
-  return level_max, s
+  done[k] = { level_max, path }
+  return level_max, path
 end
 
 sum = 0
 for i = 2, 200 do
-  local level_max, s = get_number_of_multiplications(i)
-  --print(i, level_max, s)
-  sum = sum + level_max
+  local s, p = get_number_of_multiplications(i)
+  print(i, s, p)
+  sum = sum + s
 end
 
 print("problem #122", 'the sum:', sum, sum == 1582)
