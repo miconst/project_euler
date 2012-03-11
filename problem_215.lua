@@ -69,46 +69,32 @@ end
 for i = 1, #cracks - 1 do
   for j = i + 1, #cracks do
     if not get_running_crack(cracks[i], cracks[j]) then
-      compatibility_map[i][j] = true
-      compatibility_map[j][i] = true
+      compatibility_map[i][j] = 1
+      compatibility_map[j][i] = 1
     end
   end
-end
-
-for i = 1, #cracks do
-  local t = {}
-  for j in pairs(compatibility_map[i]) do
-    table.insert(t, j)
-  end
-  table.sort(t)
-  compatibility_map[i] = t
---~   print(i, ":", unpack(t))
-end
-
-mem = {}
-
-function count_leaves(row_num, row)
-  if not mem[row_num] then
-    mem[row_num] = {}
-  end
-  if not mem[row_num][row] then
-    if row_num > 2 then
-      local n = "0"
-      for i = 1, #compatibility_map[row] do
-        n = sum(n, count_leaves(row_num - 1, compatibility_map[row][i]))
-      end
-      mem[row_num][row] = n
-    else
-      mem[row_num][row] = tostring(#compatibility_map[row])
-    end
-  end
-  return mem[row_num][row]
 end
 
 function make_wall(row_num)
-  local n = "0"
+  local row_2 = {}
   for i = 1, #compatibility_map do
-    n = sum(n, count_leaves(row_num, i))
+    for x in pairs(compatibility_map[i]) do
+      row_2[x] = (row_2[x] or 0) + 1
+    end
+  end
+  local last_row = row_2
+  for row = 3, row_num do
+    local next_row = {}
+    for i, m in pairs(last_row) do
+      for x in pairs(compatibility_map[i]) do
+        next_row[x] = (next_row[x] or 0) + m
+      end
+    end
+    last_row = next_row
+  end
+  local n = "0"
+  for i, m in pairs(last_row) do
+    n = sum(n, tostring(m))
   end
   return n
 end
