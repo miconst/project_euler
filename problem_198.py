@@ -20,37 +20,46 @@ def inc(s, pos):
   s[pos] += 1
   return norm(s)
 
-def get_invalid_pos(s, r={}):
-  l = len(s)
-  for i in range(l):
-    pos = l - i - 1
-    # rule #1: two cells cannot have the same colour
-    if pos < l - 1 and s[pos] == s[pos + 1]:
-      return pos
-    # rule #2: the cell cannot have the defined color
-    if pos in r and s[pos] == r[pos]:
-      return pos
+# rule #1: near cells cannot have the same colour
+def get_invalid_pos_1(s):
+  for i in range(len(s)-2, -1, -1):
+    if s[i] == s[i + 1]:
+      return i
   return -1
 
-def get_stats(seq, r2={}):
-  stats = {}
-  while True:
+# rule #2: the cell cannot have the previos row color
+def get_invalid_pos_2(s, t):
+  for i in range(len(t)):
+    if s[i*2] == t[i]:
+      return i*2
+  return -1
+
+def get_stats(w, src = None, dst = {}):
+  seq = [1]*w
+  while 1:
     pos = 0
-    i = get_invalid_pos(seq, r2)
+    i = get_invalid_pos_1(seq)
     if i < 0:
       k = tuple(seq[1:-1:2])
-      if not k in stats:
-        stats[k] = 1
+      if src:
+        for t, v in src.items():
+          if get_invalid_pos_2(seq, t) < 0:
+            if not k in dst:
+              dst[k] = v
+            else:
+              dst[k] += v
       else:
-        stats[k] += 1
+        if not k in dst:
+          dst[k] = 1
+        else:
+          dst[k] += 1
     else:
       pos = i
     if not inc(seq, pos):
-      break
-  return stats
+      return dst
 
-W = 15
-stats = get_stats(make_row(W))
+W = 15  # row width
+stats = get_stats(W)
 
 ##count = 0
 ##for k,v in stats.items():
@@ -59,16 +68,8 @@ stats = get_stats(make_row(W))
 
 for w in range(W - 2, 0, -2):
   s = {}
-  for k, v in stats.items():
-    rule_b = {}
-    for i in range(0, w, 2):
-      rule_b[i] = k[i / 2]
-    for kk, vv in get_stats(make_row(w), rule_b).items():
-      if not kk in s:
-        s[kk] = vv * v
-      else:
-        s[kk] += vv * v
-  stats = s
+  print(len(stats))
+  stats = get_stats(w, stats, s)
 
 count = 0
 for k,v in stats.items():
@@ -77,4 +78,3 @@ print("problem #189. The number of distinct valid colourings:", count, count == 
 
 job_time = int(time.clock() - job_time)
 print("Job has taken {0} min {1} sec.".format(job_time // 60, job_time % 60))
-
