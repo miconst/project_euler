@@ -1,24 +1,20 @@
 import time
 job_time = time.clock()
 
-def make_row(w):
-  return [1]*w
-
-##def make_rule_a(w):
-##  return dict((x, x+1) for (x) in xrange(w-1))
-
-def norm(s):
-  for i in range(len(s) - 1):
-    if s[i] > 3:
-      s[i] = 1
-      s[i + 1] += 1
-  return s[-1] <= 3
-
 def inc(s, pos):
   for i in range(pos):
     s[i] = 1
   s[pos] += 1
-  return norm(s)
+  
+  last = len(s) - 1
+  while s[pos] > 3:
+    if pos == last:
+      return False
+    else:
+      s[pos] = 1
+      pos += 1
+      s[pos] += 1
+  return True
 
 # rule #1: near cells cannot have the same colour
 def get_invalid_pos_1(s):
@@ -29,12 +25,13 @@ def get_invalid_pos_1(s):
 
 # rule #2: the cell cannot have the previos row color
 def get_invalid_pos_2(s, t):
-  for i in range(len(t)):
-    if s[i*2] == t[i]:
+  for i, c in enumerate(t):
+    if s[i*2] == c:
       return i*2
   return -1
 
-def get_stats(w, src = None, dst = {}):
+def get_stats(w, src = None):
+  dst = {}
   seq = [1]*w
   while 1:
     pos = 0
@@ -42,17 +39,11 @@ def get_stats(w, src = None, dst = {}):
     if i < 0:
       k = tuple(seq[1:-1:2])
       if src:
-        for t, v in src.items():
+        for t, v in src.iteritems():
           if get_invalid_pos_2(seq, t) < 0:
-            if not k in dst:
-              dst[k] = v
-            else:
-              dst[k] += v
+            dst[k] = dst.get(k, 0) + v
       else:
-        if not k in dst:
-          dst[k] = 1
-        else:
-          dst[k] += 1
+        dst[k] = dst.get(k, 0) + 1
     else:
       pos = i
     if not inc(seq, pos):
@@ -61,15 +52,9 @@ def get_stats(w, src = None, dst = {}):
 W = 15  # row width
 stats = get_stats(W)
 
-##count = 0
-##for k,v in stats.items():
-##  count += v
-##print(count)
-
 for w in range(W - 2, 0, -2):
-  s = {}
   print(len(stats))
-  stats = get_stats(w, stats, s)
+  stats = get_stats(w, stats)
 
 count = 0
 for k,v in stats.items():
