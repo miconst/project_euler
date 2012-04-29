@@ -30,6 +30,18 @@ def get_invalid_pos_2(s, t):
       return i*2
   return -1
 
+# Remove all symmetrical cases
+def remove_symmetry(stats):
+  keys = stats.keys()
+  keys.sort()
+  l_min = len(keys) / 3
+  for pos, key in enumerate(keys):
+    if pos < l_min:
+      stats[key] *= 3
+    else:
+      del stats[key]
+  return stats
+
 def get_stats(w, src = None):
   dst = {}
   seq = [1]*w
@@ -50,7 +62,7 @@ def get_stats(w, src = None):
       return dst
 
 W = 15  # row width
-stats = get_stats(W)
+stats = remove_symmetry(get_stats(W))
 
 for w in range(W - 2, 0, -2):
   print(len(stats))
