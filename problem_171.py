@@ -6,39 +6,32 @@ N = 20
 D = 9
 F = [math.factorial(x) for x in range(N + 1)]
 
-digits = [0] * D
+class Solution:
+  def __init__(self):
+    self.seq = [0]*10
+    self.sum = 0
+  def get_all_square_sums(self, n, pos = 1, count = N):
+    if n == 0:
+      self.seq[0] = count
+      x = reduce(lambda a, b: a / F[b], self.seq, F[N])
+      for i, n in enumerate(self.seq):
+        self.sum += i * x * n / N
+    elif pos < 10 and count > 0 and n >= pos * pos:
+      a = n // (pos * pos)
+      if a > count:
+        a = count
+      for i in range(a, -1, -1):
+        self.seq[pos] = i
+        self.get_all_square_sums(n - i * pos * pos, pos + 1, count - i)
 
-def add(seq, num):
-  x = 0
-  for i, n in enumerate(seq):
-    n += num + x
-    x = n // 10
-    seq[i] = n - x * 10
-
-def get_all_square_sums(n, seq = [0] * 10, pos = 1, count = N):
-  if n == 0:
-    seq[0] = count
-    x = reduce(lambda a, b: a / F[b], seq, F[N])
-    y = 0
-    for i, n in enumerate(seq):
-      y += i * x * n / N
-    add(digits, y)
-  elif pos < 10 and count > 0 and n >= pos * pos:
-    a = count
-    b = n // (pos * pos)
-    if b < a:
-      a = b
-    for i in range(a, -1, -1):
-      seq[pos] = i
-      get_all_square_sums(n - i * pos * pos, seq, pos + 1, count - i)
-
+sol = Solution()
 for i in range(1, int(math.ceil(math.sqrt(N * 9**2)))):
-  get_all_square_sums(i*i)
-  print(i, digits)
+  sol.get_all_square_sums(i*i)
 
 dsum = 0
-for i, n in enumerate(digits):
-  dsum += n * 10**i
+for i in range(D):
+  dsum += sol.sum * 10**i
+dsum %= 10**D
 
 print("problem #171. The last nine digits of the sum:", dsum, dsum == 142989277)
 
