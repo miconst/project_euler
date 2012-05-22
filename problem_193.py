@@ -1,4 +1,4 @@
-import time, bisect
+import time
 
 job_time = time.clock()
 
@@ -20,28 +20,26 @@ primes_sq = [x * x for x in get_primes(int(2**(N/2.0)))]
 primes_sq.sort()
 print(len(primes_sq))
 
-def get_euler_coefs(number, level):
-  n = [ 0 ]
-  def get_coefs(x, cur_pos, num_of_elem):
+def get_euler_coefs(number):
+  ns = []
+  def get_coefs(x=1, cur_pos=0, level=0):
     assert(x <= number)
-    num_of_elem -= 1
+    if level == len(ns):
+      ns.append(0)
     for pos in xrange(cur_pos, len(primes_sq)):
       y = primes_sq[pos] * x
       if y <= number:
-        if num_of_elem == 0:
-          n[0] += number // y
-        else:
-          get_coefs(y, pos + 1, num_of_elem)
+        ns[level] += number // y
+        get_coefs(y, pos + 1, level + 1)
       else: break
-  get_coefs(1, 0, level + 1)
-  return n[0]
+
+  get_coefs()
+  return ns
 
 def get_squarefree(number):
   x = 0
-  for l in xrange(len(primes_sq)):
-    n = get_euler_coefs(number, l)
-    if n == 0: break
-    x += (-1)**(l%2) * n
+  for i, n in enumerate(get_euler_coefs(number)):
+    x += (-1)**(i%2) * n
   return number - x
 
 count = get_squarefree(2**N)
