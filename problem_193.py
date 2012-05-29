@@ -2,23 +2,23 @@ import time
 
 job_time = time.clock()
 
-def get_primes(n):
+def get_primes_sq(n):
   # generate a list of integers from 2 to N
   primes = set(xrange(3, n + 1, 2))
+  primes_sq = [2 * 2]
   
   # strike (sift out) the multiples
   for i in xrange(3, n + 1):
     if i in primes:
-      for j in xrange(i + i, n + 1, i):
+      primes_sq.append(i * i)
+      for j in xrange(i, n + 1, i):
         primes.discard(j)
-  primes.add(2)
-  return primes
+  return primes_sq
 
 N = 50
 
-primes_sq = [x * x for x in get_primes(int(2**(N/2.0)))]
-primes_sq.sort()
-print(len(primes_sq))
+primes_sq = get_primes_sq(int(2**(N/2.0)))
+print("Got {0} prime squares.".format(len(primes_sq)))
 
 def get_euler_coefs(number):
   ns = []
