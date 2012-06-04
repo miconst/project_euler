@@ -58,11 +58,17 @@ digits = (factorial(10**N, ac) * pow_mod(2, ac[2] - ac[5])) % MOD
 
 for a in [1,3,7,9]:
   print(digits)
+  d = {}
   for x in ac[a]:
     x -= (x // MOD) * MOD
-    while x > 0:
-      digits = (digits * x) % MOD
-      x -= 10
+    d[x] = d.get(x, 0) + 1
+
+  x = a
+  while a < MOD:
+    if a in d:
+      digits = (digits * pow_mod(x, d[a])) % MOD
+    a += 10
+    x = (a * x) % MOD
 
 print("problem #160. The last five digits of f(1,000,000,000,000):", digits, digits == 16576)
 
