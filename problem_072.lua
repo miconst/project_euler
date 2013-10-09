@@ -18,14 +18,14 @@ function euler_phi(number)
         n = n / prime
       until n % prime ~= 0
 
-      phi = phi * (1 - 1 / prime)
+      phi = phi  - phi / prime
       if n == 1 then
         --print("-", n, number)
-        return math.floor(phi + 0.5), false
+        return phi, false
       elseif prime_hash[n] then
         --print("$", n, number)
-        phi = phi * (1 - 1 / n)
-        return math.floor(phi + 0.5), false
+        phi = phi - phi / n
+        return phi, false
       end
     elseif n == number and prime_max < prime then
       --print("$", number, prime, prime_max)
