@@ -29,16 +29,16 @@ P = get_period(N, M)
 
 # print( "period: ", P )
 
-assert(N == pow_mod(N, P + 1, M))
-assert(1 == pow_mod(N, P + 0, M))
+assert(N == pow(N, P + 1, M))
+assert(1 == pow(N, P + 0, M))
 
 n = N
 i = I
 while i > 2:
   i -= 1
-  n = pow_mod(N, n, P)
+  n = pow(N, n, P)
 
-last_digits = pow_mod(N, n, M)
+last_digits = pow(N, n, M)
 
 print("problem #188. " +
       "The last 8 digits of {0}^^{1}: {2}".format(N, I, last_digits), last_digits == 95962097)
