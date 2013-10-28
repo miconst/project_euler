@@ -1,9 +1,8 @@
 import time, math
-from fractions import gcd
 
 job_time = time.clock()
 
-N = 120000#120000
+N = 120000 #120000
 S = 0
 
 # abc-hits:
@@ -27,57 +26,46 @@ def get_primes( n ):
 
   return primes
 
-primes = get_primes( N - 1 )
-
 # The radical of n, rad(n), is the product of distinct prime factors of n.
-prime_set = [set() for x in xrange(N)]
-radicals = [1] * N
-for p in primes:
+primes = [set() for x in xrange(N)]
+rad = [1] * N
+for p in get_primes( N - 1 ):
   for j in xrange(p, N, p):
-    prime_set[j].add(p)
-    radicals[j] *= p
+    primes[j].add(p)
+    rad[j] *= p
+
+rad_sets = dict()
+for n in xrange(1, N):
+  r = rad[n]
+  if r not in rad_sets:
+    rad_sets[r] = set()
+  rad_sets[r].add(n)
+
+rad_keys = sorted(rad_sets.keys())
 
 for c in xrange(3, N):
-  #~ if c in primes:
-    #~ continue
-  rc = radicals[c]
+  rc = rad[c]
   if rc + rc >= c:
     continue
   # check a = 1, b = c - 1
-  if rc * radicals[c - 1] < c and prime_set[c - 1].isdisjoint(prime_set[c]):
+  if rc * rad[c - 1] < c and primes[c - 1].isdisjoint(primes[c]):
     S += c
   elif 2 * 3 * rc >= c:
     continue
-  for b in xrange(1 + c // 2, c - 1):
-    a = c - b
-    #~ assert(a > 0)
-    #~ assert(a < b)
-    r = rc * radicals[a] * radicals[b]
-    if r < c and prime_set[a].isdisjoint(prime_set[b]) and prime_set[a].isdisjoint(prime_set[c]) and prime_set[b].isdisjoint(prime_set[c]):
-    #~ if r < c and gcd(a, b) == 1 and gcd(a, c) == 1 and gcd(b, c) == 1:
-      #~ print a, b, c
-      S += c
-
-'''
-for b in xrange(2, N):
-  if b in primes:
-    continue
-  rb = radicals[b]
-  if rb + rb >= b:
-    continue
-  for a in xrange(1, min(b, N - b)):
-    c = a + b
-    r = rb * radicals[a] * radicals[c]
-    if r < c and prime_set[a].isdisjoint(prime_set[b]) and prime_set[a].isdisjoint(prime_set[c]) and prime_set[b].isdisjoint(prime_set[c]):
-    #~ if r < c and gcd(a, b) == 1 and gcd(a, c) == 1 and gcd(b, c) == 1:
-      #~ print a, b, c
-      S += c
-'''
-
-#18407904
+  b_min = 1 + c // 2
+  b_max = c - 2
+  for rb in rad_keys:
+    r = rb * rc
+    if r > c:
+      break
+    for b in rad_sets[rb]:
+      if b_min <= b <= b_max:
+        a = c - b
+        if r * rad[a] < c and primes[a].isdisjoint(primes[b]) and primes[a].isdisjoint(primes[c]) and primes[b].isdisjoint(primes[c]):
+          S += c
 
 print("problem #127. " +
-      "The sum of abc-hits for n = {0}: {1}".format(N, S), S == 541276)
+      "The sum of abc-hits for n = {0}: {1}".format(N, S), S == 18407904)
 
 job_time = int(time.clock() - job_time)
 print("Job has taken {0} min {1} sec.".format(job_time // 60, job_time % 60))
