@@ -7,44 +7,26 @@ job_time = time.clock()
 # https://oeis.org/A080715
 
 N = 10**8
-P_MAX = int(math.sqrt(N))
+S = 0
 
-primes = [2]
+# generate a list of integers from 0 to N + 1
+composite_numbers = bytearray(N + 2)
 
-for i in xrange(3, P_MAX, 2):
-  p_max = math.sqrt(i)
-  for p in primes:
-    if p > p_max:
-      primes.append(i)
-      break
-
-    d = i // p
-    if d * p == i:
-      break
-
-# print len(primes)
-
-def is_prime(n):
-  p_max = math.sqrt(n)
-  for p in primes:
-    if p > p_max:
-      break
-    if n % p == 0:
-      return False
-  return True
-
-S = 1
-
-for n in xrange(2, N, 2):
-  d_max = int(math.sqrt(n))
-  for d in xrange(1, d_max + 1):
-    if n % d == 0:
-      a = n // d
-      if not is_prime(a + d):
-        break
-  else:
-    # print n
-    S += n
+for i in xrange(2, N + 2):
+  if composite_numbers[i] == 0:
+    # strike (sift out) the multiples
+    for j in xrange(i + i, N + 2, i):
+      composite_numbers[j] = 1
+    
+    n = i - 1
+    d_max = int(math.sqrt(n))
+    for d in xrange(1, d_max + 1):
+      if n % d == 0:
+        a = n // d
+        if composite_numbers[a + d] != 0:
+          break
+    else:
+      S += n
 
 print("problem #357. " +
       "The sum of all positive integers n not exceeding {0} such that for every"
